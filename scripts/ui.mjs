@@ -111,6 +111,7 @@ for (const lang of ['ar', 'en']) {
     if (await page.locator('.row').count() !== 2) note(tag, 'the backup did not bring the assets back');
 
     await page.click('#tabs a[data-view="guide"]');
+    await page.waitForSelector('#view .guide');
     if ((await page.locator('#toast').textContent()).trim()) note(tag, 'a message from another view is still showing');
     await overflow('guide'); await shot('guide');
 
