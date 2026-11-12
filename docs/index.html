@@ -7,58 +7,116 @@
 <meta name="referrer" content="no-referrer">
 <title>الجرد الرقمي</title>
 <meta name="description" content="جرد حساباتك وأجهزتك لأهلك، ومن يستلم كل واحد منها، وكيف يصل إليه، دون حساب ودون أن يغادر المتصفح شيء.">
-<meta name="theme-color" content="#F2F0EA">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="assets/css/app.css">
-<script type="module" src="assets/js/app.js"></script>
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/enter.js"></script>
+<script type="module" src="assets/js/landing.js"></script>
 </head>
-<body>
+<body class="landing" id="top">
+<!-- Dealt: hero triptych, nav-centre, footer-statement, close-type, dark-band, pill buttons, arc mark,
+     palette white-link-blue, type SUSE with IBM Plex Sans Arabic, one moment: line-carries-colour in the sheet section. -->
 <a class="skip" href="#main" data-t="skip">انتقل إلى المحتوى</a>
 
-<header class="top">
-  <div class="wrap top-row">
-    <div class="brand">
-      <h1 data-t="title">الجرد الرقمي</h1>
-      <p data-t="tagline">جرد حساباتك وأجهزتك لأهلك، ومن يستلم كل واحد منها، وكيف يصل إليه.</p>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><svg viewBox="0 0 22 22" aria-hidden="true"><path d="M4 16.5A8.5 8.5 0 1 1 18 16.5"/></svg><span data-t="title">الجرد الرقمي</span></a>
+    <nav class="nav__links" id="links" aria-label="">
+      <a href="#tool" data-t="navTool">الأداة</a>
+      <a href="#steps" data-t="navSteps">الخطوات</a>
+      <a href="#sheet" data-t="navSheet">الورقة</a>
+      <a href="#questions" data-t="navQuestions">الأسئلة</a>
+    </nav>
+    <div class="nav__end">
+      <button class="btn btn--quiet btn--small" id="lang" type="button"></button>
+      <a class="btn btn--primary" href="app.html" data-t="cta">ابدأ الجرد</a>
+      <button class="btn btn--small nav__toggle" id="toggle" type="button" aria-expanded="false" aria-controls="menu" data-t="menu">القائمة</button>
     </div>
-    <div class="seal" id="seal" role="img" aria-label="">
-      <svg viewBox="0 0 72 72" width="72" height="72" aria-hidden="true" focusable="false">
-        <circle class="seal-rim" cx="36" cy="36" r="34"/>
-        <circle class="seal-track" cx="36" cy="36" r="28"/>
-        <circle class="seal-ink" id="seal-ink" cx="36" cy="36" r="28" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 36 36)"/>
-      </svg>
-      <div class="seal-text">
-        <span class="seal-figure" id="seal-figure" dir="ltr"></span>
-        <span class="seal-word" id="seal-word"></span>
-      </div>
-    </div>
-    <button class="btn quiet lang" id="lang" type="button"></button>
   </div>
-  <nav class="wrap tabs" id="tabs" aria-label="">
-    <a href="#assets" data-view="assets" data-t="tabAssets">الأصول</a>
-    <a href="#people" data-view="people" data-t="tabPeople">المستلمون</a>
-    <a href="#sheet" data-view="sheet" data-t="tabSheet">الورقة</a>
-    <a href="#guide" data-view="guide" data-t="tabGuide">دليل الأهل</a>
-  </nav>
 </header>
+<div class="sheet-menu" id="menu">
+  <a href="#tool" data-t="navTool">الأداة</a>
+  <a href="#steps" data-t="navSteps">الخطوات</a>
+  <a href="#sheet" data-t="navSheet">الورقة</a>
+  <a href="#questions" data-t="navQuestions">الأسئلة</a>
+  <a class="btn btn--primary" href="app.html" data-t="cta">ابدأ الجرد</a>
+</div>
 
-<main id="main" class="wrap" tabindex="-1">
-  <p class="promise" data-t="privacyLine">كل ما تكتبه يبقى في هذا المتصفح ولا يُرسل إلى أي خادم.</p>
-  <div id="view"></div>
-  <p class="toast" id="toast" role="status" aria-live="polite"></p>
+<main id="main" tabindex="-1">
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap"><div class="grid hero__grid">
+      <div class="span-3 hero__text">
+        <h1 id="hero-h" data-t="heroH">جرد حساباتك الرقمية لأهلك</h1>
+        <p class="hero__lead" data-t="heroLead">اكتب ما تملكه من حسابات وأجهزة، ومن يستلم كل واحد منها، وأين يجد طريقة الدخول، ثم اطبعه في ورقتين تُحفظان مع وصيتك، مجاناً ودون حساب.</p>
+      </div>
+      <div class="collage span-6 start-4" id="collage" role="img" aria-label=""></div>
+      <div class="span-3 start-10 hero__cta"><a class="btn btn--primary" id="hero-cta" href="app.html"><span data-t="cta">ابدأ الجرد</span><svg class="icon icon--arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h10M8.5 4l4 4-4 4"/></svg></a></div>
+    </div></div>
+  </section>
+
+  <section id="tool" aria-labelledby="tool-h">
+    <div class="wrap">
+      <div class="grid section-head">
+        <h2 class="span-5" id="tool-h" data-t="toolH">كل أصل ومن يستلمه في نافذة واحدة</h2>
+        <p class="span-6 start-7 muted"><span data-t="toolP">تختار الأصل من القائمة، فتكتب معرّفه ومن يستلمه وماذا يُفعل به، ثم تنجز الخطوات التي تطلبها الخدمة نفسها، والأداة تعدّ ما بقي.</span> <a class="link" href="#sheet" data-t="toolLink">شاهد الورقة المطبوعة</a></p>
+      </div>
+      <div class="app" id="app-frame" role="img" aria-label=""></div>
+    </div>
+  </section>
+
+  <section id="steps" aria-labelledby="steps-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="steps-h" data-t="stepsH">جهّز ورقتك في 3 خطوات</h2></div>
+      <div class="grid steps3" id="steps-cards"></div>
+    </div>
+  </section>
+
+  <section class="band" id="sheet" aria-labelledby="sheet-h">
+    <div class="veil" aria-hidden="true"></div><div class="veil__line" aria-hidden="true"></div>
+    <div class="wrap"><div class="grid band__grid">
+      <div class="span-5 band__text">
+        <h2 id="sheet-h" data-reveal data-t="sheetH">ورقة تُحفظ مع الوصية</h2>
+        <p data-reveal data-t="sheetP">يجد فيها أهلك ما تملكه ومن يستلمه وأين طريقة الدخول، وليس فيها كلمة مرور واحدة، لأن الأداة لا تطلبها ولا تخزّنها.</p>
+        <ul class="band__rows" id="sheet-rows" data-reveal></ul>
+      </div>
+      <div class="span-7 start-6 paper" id="paper" role="img" aria-label="" data-reveal></div>
+    </div></div>
+  </section>
+
+  <section id="questions" aria-labelledby="faq-h">
+    <div class="wrap"><div class="grid">
+      <div class="span-5 faq__side">
+        <h2 id="faq-h" data-t="faqH">الأسئلة</h2>
+        <p class="muted" data-t="faqP">ما يُسأل عنه قبل كتابة أول أصل.</p>
+        <a class="link" href="#top" data-repo rel="noopener" data-t="faqLink">اقرأ الشيفرة المصدرية</a>
+      </div>
+      <div class="span-6 start-7 faq" id="faq"></div>
+    </div></div>
+  </section>
 </main>
 
-<section class="paper" id="paper" aria-hidden="true"></section>
-
-<footer class="foot">
+<footer class="closing" aria-labelledby="close-h">
   <div class="wrap">
-    <h2 data-t="aboutHeading">عن الأداة</h2>
-    <p data-t="about">أداة مفتوحة المصدر تنظّم وتوثّق، ولا تفتي ولا تقسّم تركة ولا تغني عن المختص.</p>
-    <p id="sources-note"></p>
-    <p class="foot-line"><span data-t="by">صنعها علي العنزي</span><a id="code-link" hidden data-t="code">الشيفرة المصدرية</a></p>
+    <div class="close">
+      <h2 id="close-h" data-t="closeH">اكتب جردك واطبعه لأهلك</h2>
+      <p class="muted" data-t="closeLine">مجاني ومفتوح المصدر، ودون حساب.</p>
+      <a class="btn btn--primary btn--xl" id="close-cta" href="app.html"><span data-t="cta">ابدأ الجرد</span><svg class="icon icon--arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h10M8.5 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="foot">
+      <nav class="foot__links" aria-label="">
+        <a href="#tool" data-t="navTool">الأداة</a>
+        <a href="#steps" data-t="navSteps">الخطوات</a>
+        <a href="#sheet" data-t="navSheet">الورقة</a>
+        <a href="#questions" data-t="navQuestions">الأسئلة</a>
+        <a href="#top" data-repo rel="noopener" data-t="code">الشيفرة المصدرية</a>
+      </nav>
+      <div class="foot__legal"><span id="foot-year"></span><span data-t="by">صنعها علي العنزي</span></div>
+    </div>
   </div>
 </footer>
-<noscript><p class="wrap">تحتاج هذه الأداة إلى JavaScript لأنها تعمل كلها في متصفحك. This tool needs JavaScript because it runs entirely in your browser.</p></noscript>
+
+<nav class="actionbar" id="actionbar" aria-label=""><a class="btn btn--primary" href="app.html" data-t="cta">ابدأ الجرد</a></nav>
+<noscript><p class="wrap">تحتاج هذه الصفحة إلى JavaScript لعرض صور الأداة. This page needs JavaScript to draw the tool.</p></noscript>
 </body>
 </html>

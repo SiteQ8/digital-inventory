@@ -2,10 +2,10 @@
 
 ## Fonts (self hosted in `docs/assets/fonts`)
 
-* **Markazi Text**, by Borna Izadpanah and Florian Runge, SIL Open Font License 1.1. Used for titles, figures and the printed sheet's headings.
-* **Tajawal**, by Boutros Fonts, SIL Open Font License 1.1. Used for all other text.
+* **SUSE**, by René Bieder for SUSE, SIL Open Font License 1.1. Latin text and numerals.
+* **IBM Plex Sans Arabic**, by IBM, SIL Open Font License 1.1. Arabic text.
 
-The font files were taken from Google Fonts and are served from this site. The page loads nothing from another host.
+The font files were taken from Google Fonts and are served from this site. The pages load nothing from another host.
 
 ## Service names
 

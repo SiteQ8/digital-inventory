@@ -2,18 +2,15 @@
 // It answers only for this site's own files and never asks another host for anything.
 // VERSION and FILES are written by scripts/stamp.mjs and checked by the tests.
 
-const VERSION = '2526abc704ef';
+const VERSION = '098cbd506dec';
 const FILES = [
   './',
-  'assets/css/app.css',
-  'assets/fonts/markazi-ar.woff2',
-  'assets/fonts/markazi-lat.woff2',
-  'assets/fonts/tajawal-400-ar.woff2',
-  'assets/fonts/tajawal-400-lat.woff2',
-  'assets/fonts/tajawal-500-ar.woff2',
-  'assets/fonts/tajawal-500-lat.woff2',
-  'assets/fonts/tajawal-700-ar.woff2',
-  'assets/fonts/tajawal-700-lat.woff2',
+  'app.html',
+  'assets/css/site.css',
+  'assets/fonts/plex-ar-400.woff2',
+  'assets/fonts/plex-ar-500.woff2',
+  'assets/fonts/plex-ar-600.woff2',
+  'assets/fonts/suse-lat.woff2',
   'assets/img/icon.svg',
   'assets/js/app.js',
   'assets/js/engine/brand.js',
@@ -21,6 +18,9 @@ const FILES = [
   'assets/js/engine/i18n.js',
   'assets/js/engine/model.js',
   'assets/js/engine/vault.js',
+  'assets/js/enter.js',
+  'assets/js/landing.js',
+  'assets/js/ui.js',
   'index.html',
   'manifest.webmanifest'
 ];

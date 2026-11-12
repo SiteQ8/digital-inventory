@@ -23,6 +23,7 @@ function files(dir, out = []) {
   return out;
 }
 
+const PAGES = ['docs/index.html', 'docs/app.html'];
 const ALL = files(ROOT).map((path) => ({ path: path.slice(ROOT.length), text: readFileSync(path, 'utf8') }));
 
 function flat(value) {
@@ -87,17 +88,20 @@ test('the page code cannot reach a network', () => {
   const code = ALL.filter((f) => f.path.startsWith('docs/assets/js/'));
   assert.ok(code.length >= 6);
   for (const { path, text } of code) assert.ok(!calls.test(text), path);
-  const page = ALL.find((f) => f.path === 'docs/index.html').text;
-  assert.match(page, /connect-src 'none'/);
-  assert.match(page, /default-src 'none'/);
-  assert.ok(!/(src|href)="https?:/.test(page), 'the page loads nothing from another host');
-  const css = ALL.find((f) => f.path === 'docs/assets/css/app.css').text;
+  for (const name of PAGES) {
+    const page = ALL.find((f) => f.path === name).text;
+    assert.match(page, /connect-src 'none'/, name);
+    assert.match(page, /default-src 'none'/, name);
+    assert.ok(!/(src|href)="https?:/.test(page), `${name} names no other host`);
+    assert.ok(!/ style="/.test(page), `${name} carries no style attribute, which its policy would refuse`);
+  }
+  const css = ALL.find((f) => f.path === 'docs/assets/css/site.css').text;
   assert.ok(!/url\(\s*["']?https?:/.test(css));
 });
 
 test('colours and durations live in the tokens, not in the rules', () => {
-  const css = ALL.find((f) => f.path === 'docs/assets/css/app.css').text;
-  const root = css.slice(css.indexOf(':root {'), css.indexOf('}', css.indexOf(':root {')));
+  const css = ALL.find((f) => f.path === 'docs/assets/css/site.css').text;
+  const root = css.slice(css.indexOf(':root {'), css.indexOf('\n}', css.indexOf(':root {')));
   const print = css.slice(css.indexOf('@media print'));
   const rest = css.replace(root, '').replace(print, '');
   assert.ok(!/#[0-9a-fA-F]{3,8}\b/.test(rest), 'a colour outside the tokens');
@@ -106,10 +110,12 @@ test('colours and durations live in the tokens, not in the rules', () => {
 });
 
 test('every Arabic line in the page file has its English in the strings', () => {
-  const page = ALL.find((f) => f.path === 'docs/index.html').text;
-  for (const [, key] of page.matchAll(/data-t="(\w+)"/g)) {
-    assert.equal(typeof STRINGS.ar[key], 'string', key);
-    assert.equal(typeof STRINGS.en[key], 'string', key);
+  for (const name of PAGES) {
+    const page = ALL.find((f) => f.path === name).text;
+    for (const [, key, text] of page.matchAll(/data-t="(\w+)"[^>]*>([^<]*)</g)) {
+      assert.equal(typeof STRINGS.en[key], 'string', key);
+      assert.equal(text, STRINGS.ar[key], `${name}: the written Arabic for ${key} differs from the strings`);
+    }
   }
 });
 
@@ -122,8 +128,7 @@ test('the offline copy lists every published file and matches their content', ()
 });
 
 test('the name lives in one place and the other files agree with it', () => {
-  const page = ALL.find((f) => f.path === 'docs/index.html').text;
-  assert.ok(page.includes(`<title>${brand.ar}</title>`));
+  for (const name of PAGES) assert.ok(ALL.find((f) => f.path === name).text.includes(`<title>${brand.ar}</title>`), name);
   const app = JSON.parse(readFileSync(join(ROOT, 'docs/manifest.webmanifest'), 'utf8'));
   assert.equal(app.name, brand.ar);
   assert.equal(app.short_name, brand.ar);

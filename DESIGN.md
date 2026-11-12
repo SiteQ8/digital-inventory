@@ -1,46 +1,70 @@
 # Design
 
-The world is the sheet itself: a paper kept with a family's important documents, written in ink and closed with one stamp. The page is a working tool, so the world lends only its materials and one signature.
+## The world: sheet and biro
 
-## Materials
+A white sheet, black print, and one blue. The form is printed in black. Whatever a person wrote on it is in blue, as on a paper form filled in with a biro, and blue is also the one main action. Nothing else is tinted.
+
+This replaced an earlier cream paper, serif and green look, which read as a default.
+
+## How it was decided
+
+The parts a template would fix were drawn at random from fixed lists, not picked by taste:
+
+| Part | Drawn |
+|---|---|
+| Palette | white, near black, one grey step, one blue |
+| Type | SUSE, with IBM Plex Sans Arabic for Arabic |
+| Hero | words, a collage of the tool in three sets, one large button |
+| Bar | words in the middle, name at the start, action at the end |
+| Rhythm | one dark band in the second half, holding the strongest picture |
+| Close | one line and one button across the page, on a slab with the footer |
+| Buttons | pills |
+| Moment | a line climbs the dark band and carries its colour up |
+
+Two draws were redrawn because they did not fit: a bar with a large menu panel (the page has four links), and a moment that splits a headline into letters (Arabic letters join, so they cannot be split).
+
+## Tokens
 
 | Token | Value | Job |
 |---|---|---|
-| `--paper` | #F2F0EA | the ground |
-| `--sheet` | #FBFAF6 | fields and chips, the lighter paper you write on |
-| `--ink` | #1B2430 | text and the main action |
-| `--ink-soft` | #4E5863 | secondary text, field borders |
-| `--line`, `--line-soft` | #C9C5B9, #DEDBD1 | rules |
-| `--stamp` | #0E5A4B | the stamp ink: what is done, what is current, focus |
-| `--amber` on `--amber-wash` | #744700 on #F3E6CB | what is missing, and warnings |
-| `--danger` | #962819 | removal only |
+| `--bg` | #ffffff | the sheet |
+| `--surface` | #f4f4f4 | panels, notes, the closing slab |
+| `--ink` | #111111 | print |
+| `--muted` | #6b6b6b | secondary print |
+| `--line`, `--line-strong` | #e2e2e2, #bdbdbd | rules, field borders |
+| `--accent` | #1a4be0 | what a person wrote, the main action, done, focus |
+| `--accent-wash` | #edf1fe | the chosen row, the focus ring |
+| `--inv-bg`, `--inv-ink` | #111111, #ffffff | the dark band |
+| `--danger` | #b3261e | removal and the warning about a typed secret |
 
-The stamp green is never decoration. It marks a finished asset, the current tab, the seal and the focus ring.
+Type: 13, 14, 16, 20, 28, 48 and 52 px (30 and 40 on a phone). Weights 400 and 500 only. Latin headings are tracked in by 3%. Arabic is never tracked, because tracking breaks its joins.
 
-## Type
+Space: 4, 8, 12, 16, 24, 32, 48, 64, 96 px. Radius: 8 fields, 12 cards, 24 slabs, pills for buttons. Every control is at least 44 px tall.
 
-Markazi Text carries the name, view headings, the seal's figure and the printed sheet's titles: the document's voice. Tajawal carries everything else. Sizes are fixed: 14, 16, 18, 22, 30 and 44 px. Arabic body text runs at a line height of 1.75.
+## The front page
 
-## Form
+Six screens at 1440 by 900, one section each: hero, the tool window, three steps, the sheet on the dark band, questions, the close with the footer. Every picture is the tool itself, drawn live from a sample inventory in which roles stand where names would.
 
-* One ruled list, a line per asset. No cards and no shadows.
-* One radius (4 px), one rule weight (1 px), one mark weight (2 px).
-* Spacing from one scale: 4, 8, 12, 16, 24, 32, 48, 64 px.
-* Every control is at least 44 px tall.
-* One button family: ink fill for the main action of a view, an outline for the rest, underlined text for quiet actions.
+One grid of twelve columns, one pair of text lines. Sections are parted by space or a full ground change, never by boxes.
 
-## The signature: the seal
+## The tool
 
-A stamp in the header whose ring fills as steps are completed, with the count beside it. When nothing is missing, a copy is saved and the sheet is printed, it reads "Sealed". It is the only element that moves on its own (280 ms, ease out).
+A working screen first: a bar with four sections, then the list of assets beside the open asset. On a phone the list and the open asset take turns. Controls are the browser's own: inputs, selects, checkboxes, links.
+
+The signature is the ink: every value a person typed is blue, in the fields, in the list and on the sheet shown on the front page. Print is black only.
 
 ## Motion
 
-Buttons press to 0.97 in 160 ms. The row marker turns in 160 ms. Hover styles apply only to fine pointers. Under reduced motion nothing moves.
+| Motion | Why |
+|---|---|
+| The hero enters once: the heading rises line by line, then the lead and button, the collage settles | the words arrive first, then what to do |
+| The collage changes set every 2.8 s | three sides of the tool in the space of one |
+| One loop in the tool window, 3.2 s | shows a step ticked and the asset turning complete |
+| The line on the dark band, tied to the scroll | marks the turn from the tool to the paper |
+| Buttons step up 1 px on hover and sink on press, links draw their line | every control answers |
 
-## Print
-
-The printed sheet is black on white, A4, two pages: the inventory with signature lines, then the family guide with what the recipient does for each asset.
+Hover moves only for a fine pointer. Each moving picture has a pause button. A phone and reduced motion get the still picture. Nothing fades in because the page scrolled.
 
 ## Rules the tests hold
 
-Colours and durations exist only as tokens. Both languages carry the same keys. The page loads nothing from another host.
+Colours and durations exist only as tokens. Both languages carry the same keys. No page names another host or carries a style attribute.

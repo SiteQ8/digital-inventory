@@ -30,13 +30,14 @@
 
 ```
 npm test          # 20 tests, no dependencies
+node scripts/ui.mjs      # walks both pages in a browser (needs Playwright)
 node scripts/stamp.mjs   # after any change under docs/, refreshes the offline copy
 npm run serve     # http://localhost:8899
 ```
 
 <div dir="rtl">
 
-الموقع ملفات ثابتة في `docs/` دون خطوة بناء ودون اعتماديات.
+الموقع ملفات ثابتة في `docs/` دون خطوة بناء ودون اعتماديات، وفيه صفحتان: الصفحة الرئيسة `index.html` والأداة `app.html`.
 
 </div>
 
@@ -65,6 +66,10 @@ This tool lets you list your digital assets, name who receives each one, say wha
 * It never asks for a password, a code, a recovery phrase or a card number. The inventory has no field for one, and the page warns when typed text looks like one.
 * It sends nothing to any server. No account, no tracking, no ads. The page's content security policy forbids every connection.
 * It gives no religious ruling and divides no estate. Anything with money value goes to a qualified adviser.
+
+## Pages
+
+`docs/index.html` is the front page. Every picture on it is the tool itself, drawn live from a sample inventory. `docs/app.html` is the tool.
 
 ## How the promises are held
 

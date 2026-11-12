@@ -1,5 +1,5 @@
-// A walk through the page in a real browser, in both languages, on a desktop and a phone.
-// Development only: it needs Playwright, which the tool itself never uses.
+// A walk through both pages in a real browser, in both languages, on a desktop and a phone.
+// Development only: it needs Playwright, which the site itself never uses.
 //   node scripts/ui.mjs [folder for the pictures]
 
 import { createServer } from 'node:http';
@@ -46,25 +46,59 @@ for (const lang of ['ar', 'en']) {
       if (wide > 0) note(tag, `${view} is ${wide}px wider than the screen`);
     };
     const shot = (view) => page.screenshot({ path: join(OUT, `${tag}-${view}.png`), fullPage: true });
+    const small = async (view) => {
+      const list = await page.evaluate(() => [...document.querySelectorAll('button, a.btn, .tabs a, .nav__links a, .row, .chip, select, input:not([type=checkbox]), .foot__links a, .logo')]
+        .filter((el) => el.offsetParent && !el.closest('[inert]') && el.getBoundingClientRect().height < 43.5).map((el) => el.id || el.textContent.trim().slice(0, 30)));
+      if (list.length) note(tag, `${view} targets under 44px: ${list.join(' | ')}`);
+    };
 
+    /* The front page */
     await page.goto(`${base}?lang=${lang}`);
     await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(1400);
     if (await page.getAttribute('html', 'dir') !== (lang === 'ar' ? 'rtl' : 'ltr')) note(tag, 'wrong direction');
-    await overflow('empty'); await shot('empty');
+    if (await page.locator('#hero-h .mask').count()) note(tag, 'the heading kept its entrance masks');
+    if (await page.locator('#app-frame .row').count() < 9) note(tag, 'the tool window shows too few assets');
+    if (await page.locator('#faq .faq__item').count() !== 6) note(tag, 'the questions are missing');
+    if (!(await page.locator('#paper table').count())) note(tag, 'the sheet is missing from its section');
+    const tall = await page.evaluate(() => [document.querySelector('.hero').getBoundingClientRect().height, innerHeight]);
+    if (Math.abs(tall[0] - tall[1]) > 1) note(tag, `the hero is ${tall[0]}px on a ${tall[1]}px screen`);
+    await overflow('front'); await small('front'); await shot('front');
+    if (name === 'desktop') {
+      const screens = await page.evaluate(() => document.documentElement.scrollHeight / innerHeight);
+      if (Math.abs(screens - Math.round(screens)) > 0.01) note(tag, `the front page is ${screens.toFixed(2)} screens, not whole screens`);
+      await page.evaluate(() => window.scrollTo(0, document.getElementById('sheet').offsetTop - innerHeight * 0.6));
+      await page.waitForTimeout(300);
+      await page.screenshot({ path: join(OUT, `${tag}-moment.png`) });
+    }
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.click('#hero-cta');
+    await page.waitForURL(/app\.html/);
 
+    /* The tool */
+    await page.waitForSelector('#add-link');
+    await overflow('empty'); await shot('empty');
     await page.click('#tabs a[data-view="people"]');
-    await page.fill('#p-name', lang === 'ar' ? 'سارة' : 'Sara');
-    await page.fill('#p-relation', lang === 'ar' ? 'الزوجة' : 'Wife');
-    await page.fill('#p-contact', 'sara@example.org');
+    await page.fill('#p-name', lang === 'ar' ? 'الزوجة' : 'Wife');
+    await page.fill('#p-contact', 'family@example.org');
     await page.click('.person-form button');
     if (await page.locator('.people li').count() !== 1) note(tag, 'the recipient was not added');
-    await overflow('people'); await shot('people');
+    await overflow('people'); await small('people'); await shot('people');
 
     await page.click('#tabs a[data-view="assets"]');
-    await page.click('.add-items button >> nth=0');
-    await page.click('.add-items button >> nth=11');
-    const first = await page.locator('.row').first().getAttribute('id');
-    const id = first.replace('row-', '');
+    await page.click('#add-link');
+    await page.click('.adder .chip >> nth=0');
+    await page.waitForSelector('.detail .fields');
+    await page.click('.md__list #add-link', { force: true }).catch(() => page.evaluate(() => { location.hash = '#assets/add'; }));
+    await page.evaluate(() => { location.hash = '#assets/add'; });
+    await page.waitForSelector('.adder');
+    await page.click('.adder .chip >> nth=11');
+    await page.evaluate(() => { location.hash = '#assets'; });
+    await page.waitForFunction(() => location.hash === '#assets');
+    if (await page.locator('.row').count() !== 2) note(tag, 'two assets were added but the list does not show two');
+    await page.locator('.row').first().evaluate((el) => el.click());
+    const id = await page.evaluate(() => location.hash.split('/')[1]);
+    await page.waitForSelector(`#${id}-label`);
     await page.fill(`#${id}-label`, lang === 'ar' ? 'الحساب الشخصي' : 'Personal account');
     await page.fill(`#${id}-account`, 'owner@example.org');
     await page.fill(`#${id}-where`, 'password: hunter2secret');
@@ -73,15 +107,11 @@ for (const lang of ['ar', 'en']) {
     await page.locator(`#${id}-where`).blur();
     await page.selectOption(`#${id}-recipient`, { index: 1 });
     await page.selectOption(`#${id}-action`, 'handover');
-    for (const box of await page.locator(`#row-${id} .steps input`).all()) await box.check();
-    if (!(await page.locator(`#row-${id} .row-state.done`).count())) note(tag, 'a finished asset is not shown as complete');
+    for (const box of await page.locator('.detail .steps input').all()) await box.check();
+    if (!(await page.locator('.detail__head .mark--done').count())) note(tag, 'a finished asset is not shown as complete');
     if (await page.inputValue(`#${id}-account`) !== 'owner@example.org') note(tag, 'typed text was lost by the click after it');
-    if (!(await page.locator(`#row-${id} .row-account`).textContent()).includes('owner@example.org')) note(tag, 'the line does not show the identifier');
-    await overflow('assets'); await shot('assets');
-
-    const small = await page.evaluate(() => [...document.querySelectorAll('button, #tabs a, summary, select, input:not([type=checkbox])')]
-      .filter((el) => el.offsetParent && el.getBoundingClientRect().height < 43.5).map((el) => el.id || el.textContent.trim().slice(0, 30)));
-    if (small.length) note(tag, `targets under 44px: ${small.join(' | ')}`);
+    if (!(await page.locator('.row[aria-current] .row__name').textContent()).includes(lang === 'ar' ? 'الحساب الشخصي' : 'Personal account')) note(tag, 'the list does not show the new name');
+    await overflow('asset'); await small('asset'); await shot('asset');
 
     await page.click('#tabs a[data-view="sheet"]');
     await page.fill('#owner', lang === 'ar' ? 'صاحب الورقة' : 'The owner');
@@ -96,8 +126,8 @@ for (const lang of ['ar', 'en']) {
     const saved = join(OUT, `${tag}-backup.json`);
     await file.saveAs(saved);
     const text = await readFile(saved, 'utf8');
-    if (/example\.org|Sara|سارة/.test(text)) note(tag, 'the backup is readable without the passphrase');
-    await overflow('sheet'); await shot('sheet');
+    if (/example\.org|Wife|الزوجة/.test(text)) note(tag, 'the backup is readable without the passphrase');
+    await overflow('sheet'); await small('sheet'); await shot('sheet');
 
     await page.click('#wipe');
     await page.click('#tabs a[data-view="assets"]');
@@ -107,7 +137,7 @@ for (const lang of ['ar', 'en']) {
     await page.fill('#open-pass', 'a long passphrase for the test');
     await page.click('#open-pass >> xpath=ancestor::form >> button');
     await page.click('#tabs a[data-view="assets"]');
-    await page.waitForSelector('.row');
+    await page.waitForSelector('.row', { state: 'attached' });
     if (await page.locator('.row').count() !== 2) note(tag, 'the backup did not bring the assets back');
 
     await page.click('#tabs a[data-view="guide"]');
@@ -117,13 +147,16 @@ for (const lang of ['ar', 'en']) {
 
     await page.evaluate(() => navigator.serviceWorker.ready);
     await context.setOffline(true);
-    await page.goto(`${base}?lang=${lang}#assets`);
+    await page.goto(`${base}app.html?lang=${lang}#assets`);
     await page.reload();
-    if (await page.locator('.row').count() !== 2) note(tag, 'the page did not open with no connection');
+    if (await page.locator('.row').count() !== 2) note(tag, 'the tool did not open with no connection');
     await page.evaluate(() => document.fonts.ready);
-    if (!(await page.evaluate(() => document.fonts.check('16px Tajawal')))) note(tag, 'the fonts are missing with no connection');
+    if (!(await page.evaluate(() => document.fonts.check('16px "IBM Plex Sans Arabic"') && document.fonts.check('16px SUSE')))) note(tag, 'the fonts are missing with no connection');
+    await page.goto(`${base}?lang=${lang}`);
+    if (!(await page.locator('#hero-h').textContent()).trim()) note(tag, 'the front page did not open with no connection');
     await context.setOffline(false);
 
+    await page.goto(`${base}app.html?lang=${lang}#sheet`);
     await page.emulateMedia({ media: 'print' });
     await page.pdf({ path: join(OUT, `${tag}-sheet.pdf`), format: 'A4' });
     await context.close();
