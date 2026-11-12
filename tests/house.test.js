@@ -7,6 +7,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { STRINGS } from '../docs/assets/js/engine/i18n.js';
 import { SERVICES, CATEGORIES, ACTIONS } from '../docs/assets/js/engine/catalog.js';
+import brand from '../docs/assets/js/engine/brand.js';
+import { manifest, stamped } from '../scripts/stamp.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const TEXT = new Set(['.js', '.mjs', '.css', '.html', '.md', '.json', '.svg', '.yml', '.txt', '']);
@@ -81,7 +83,7 @@ test('the work carries no word it must never carry', () => {
 });
 
 test('the page code cannot reach a network', () => {
-  const calls = /\bfetch\s*\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts|navigator\.serviceWorker|\bimport\s*\(/;
+  const calls = /\bfetch\s*\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts|\bimport\s*\(/;
   const code = ALL.filter((f) => f.path.startsWith('docs/assets/js/'));
   assert.ok(code.length >= 6);
   for (const { path, text } of code) assert.ok(!calls.test(text), path);
@@ -109,4 +111,20 @@ test('every Arabic line in the page file has its English in the strings', () => 
     assert.equal(typeof STRINGS.ar[key], 'string', key);
     assert.equal(typeof STRINGS.en[key], 'string', key);
   }
+});
+
+test('the offline copy lists every published file and matches their content', () => {
+  const sw = ALL.find((f) => f.path === 'docs/sw.js').text;
+  assert.equal(sw, stamped(sw, manifest()), 'run: node scripts/stamp.mjs');
+  assert.ok(manifest().files.length > 15);
+  assert.match(sw, /url\.origin !== self\.location\.origin\) return/);
+  assert.ok(!/https?:\/\//.test(sw), 'the worker names no other host');
+});
+
+test('the name lives in one place and the other files agree with it', () => {
+  const page = ALL.find((f) => f.path === 'docs/index.html').text;
+  assert.ok(page.includes(`<title>${brand.ar}</title>`));
+  const app = JSON.parse(readFileSync(join(ROOT, 'docs/manifest.webmanifest'), 'utf8'));
+  assert.equal(app.name, brand.ar);
+  assert.equal(app.short_name, brand.ar);
 });

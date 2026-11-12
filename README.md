@@ -16,6 +16,7 @@
 * تحسب الجاهزية خطوة بخطوة، ويكتمل الختم حين لا يبقى ناقص وتُحفظ نسخة وتُطبع الورقة.
 * تطبع ورقة الجرد ودليل الأهل على صفحتين بالعربية أو الإنجليزية.
 * تحفظ نسخة مشفَّرة بعبارة مرور تختارها.
+* تفتح دون اتصال بعد أول زيارة، وتُضاف إلى الشاشة الرئيسة في الهاتف.
 
 ## ما الذي لا تفعله
 
@@ -28,7 +29,8 @@
 </div>
 
 ```
-npm test          # 18 tests, no dependencies
+npm test          # 20 tests, no dependencies
+node scripts/stamp.mjs   # after any change under docs/, refreshes the offline copy
 npm run serve     # http://localhost:8899
 ```
 
@@ -56,6 +58,7 @@ This tool lets you list your digital assets, name who receives each one, say wha
 * Counts readiness step by step. The seal completes when nothing is missing, a copy is saved and the sheet is printed.
 * Prints the inventory and the family guide on two pages, in Arabic or English.
 * Saves a copy encrypted with a passphrase you choose (AES-256-GCM, PBKDF2-SHA-256, 600,000 rounds).
+* Opens with no connection after the first visit, and can be added to a phone's home screen.
 
 ## What it does not do
 
@@ -65,7 +68,7 @@ This tool lets you list your digital assets, name who receives each one, say wha
 
 ## How the promises are held
 
-Tests fail the build when: the two languages differ in keys, an Arabic sentence carries a period before its end, the page code names a network call, the inventory gains a field that could hold a secret, a service entry lacks its official source, or a colour or duration appears outside the design tokens. `scripts/ui.mjs` walks the page in a real browser in both languages on a desktop and a phone.
+Tests fail the build when: the two languages differ in keys, an Arabic sentence carries a period before its end, the page code names a network call, the inventory gains a field that could hold a secret, a service entry lacks its official source, the offline copy is out of date, or a colour or duration appears outside the design tokens. `scripts/ui.mjs` walks the page in a real browser in both languages on a desktop and a phone.
 
 ## Sources
 

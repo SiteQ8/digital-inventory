@@ -488,11 +488,14 @@ function start() {
     applyLanguage();
   });
   window.addEventListener('hashchange', () => {
+    document.getElementById('toast').textContent = '';
     render();
     document.getElementById('main').focus({ preventScroll: true });
     window.scrollTo(0, 0);
   });
   applyLanguage();
+  // The worker keeps the page on the device. Without it the page still works while online.
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
 start();

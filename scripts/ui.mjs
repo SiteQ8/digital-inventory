@@ -12,7 +12,7 @@ const { chromium } = require(process.env.PLAYWRIGHT || 'playwright');
 
 const DOCS = new URL('../docs/', import.meta.url).pathname;
 const OUT = process.argv[2] || 'shots';
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
+const TYPES = { '.webmanifest': 'application/manifest+json', '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
 
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, 'http://x').pathname)).replace(/^(\.\.[/\\])+/, '');
@@ -111,7 +111,17 @@ for (const lang of ['ar', 'en']) {
     if (await page.locator('.row').count() !== 2) note(tag, 'the backup did not bring the assets back');
 
     await page.click('#tabs a[data-view="guide"]');
+    if ((await page.locator('#toast').textContent()).trim()) note(tag, 'a message from another view is still showing');
     await overflow('guide'); await shot('guide');
+
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await context.setOffline(true);
+    await page.goto(`${base}?lang=${lang}#assets`);
+    await page.reload();
+    if (await page.locator('.row').count() !== 2) note(tag, 'the page did not open with no connection');
+    await page.evaluate(() => document.fonts.ready);
+    if (!(await page.evaluate(() => document.fonts.check('16px Tajawal')))) note(tag, 'the fonts are missing with no connection');
+    await context.setOffline(false);
 
     await page.emulateMedia({ media: 'print' });
     await page.pdf({ path: join(OUT, `${tag}-sheet.pdf`), format: 'A4' });
