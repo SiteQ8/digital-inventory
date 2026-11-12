@@ -2,7 +2,7 @@
 // It answers only for this site's own files and never asks another host for anything.
 // VERSION and FILES are written by scripts/stamp.mjs and checked by the tests.
 
-const VERSION = '0d1887459a17';
+const VERSION = '2526abc704ef';
 const FILES = [
   './',
   'assets/css/app.css',

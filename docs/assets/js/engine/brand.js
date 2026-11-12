@@ -3,5 +3,5 @@
 export default {
   ar: 'الجرد الرقمي',
   en: 'Digital inventory',
-  repo: '',
+  repo: 'https://github.com/SiteQ8/digital-inventory',
 };
